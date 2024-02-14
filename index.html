@@ -41,30 +41,32 @@
         <label for="pos7"><input type="checkbox" id="pos7" class="checkbox"></label>
         <label for="pos8"><input type="checkbox" id="pos8" class="checkbox"></label>
         <label for="pos9"><input type="checkbox" id="pos9" class="checkbox"></label>
-    </div>
-    <script>
+    </div><script>
         // Wait for the DOM content to be fully loaded before executing JavaScript code
         document.addEventListener('DOMContentLoaded', function () {
             // Get all elements with the class name 'checkbox' and store them in a NodeList
             const checkboxes = document.querySelectorAll('.checkbox');
-
             // Initialize the current player to 'red'
             let currentPlayer = 'red';
-
+            // Variable to store the index of the last clicked block
+            let lastClickedIndex = -1;
+            
             // Add event listeners to each checkbox
             checkboxes.forEach(addCheckboxChangeListener);
-
+    
             // Function to add change listener to checkboxes
             function addCheckboxChangeListener(checkbox, index) {
                 checkbox.addEventListener('change', function () {
+                    // Update the index of the last clicked block
+                    lastClickedIndex = index;
                     // When a checkbox is checked
                     if (this.checked) {
                         // Mark the box with the current player's color
                         markBox(this);
                         // Check for a win
                         if (checkForWin()) {
-                            // If a player wins, show an alert with the winning player's color
-                            alert("Player " + currentPlayer + " wins!");
+                            // If a player wins, show an alert with the winning player's color and the last clicked block's color
+                            alert("Player " + currentPlayer + " wins!\nLast clicked block color: " + checkboxes[lastClickedIndex].parentNode.style.backgroundColor);
                             // Reset the game
                             resetGame();
                         }
@@ -83,17 +85,17 @@
                     }
                 });
             }
-
+    
             // Function to mark the selected box with the current player's color
             function markBox(checkbox) {
                 checkbox.parentNode.style.backgroundColor = currentPlayer;
             }
-
+    
             // Function to switch player after each turn
             function switchPlayer() {
                 currentPlayer = (currentPlayer === 'red') ? 'blue' : 'red';
             }
-
+    
             // Function to check if any player has won the game
             function checkForWin() {
                 // Define winning combinations
@@ -102,7 +104,7 @@
                     [0, 3, 6], [1, 4, 7], [2, 5, 8],
                     [0, 4, 8], [2, 4, 6]
                 ];
-
+    
                 // Check if any winning combination is met
                 return winningCombinations.some(function (combination) {
                     const [a, b, c] = combination;
@@ -113,7 +115,7 @@
                     );
                 });
             }
-
+    
             // Function to check if the board is full (no more moves possible)
             function isBoardFull() {
                 // Convert the NodeList to an array and check if every checkbox has been marked
@@ -121,7 +123,7 @@
                     return checkbox.parentNode.style.backgroundColor !== '';
                 });
             }
-
+    
             // Function to reset the game board
             function resetGame() {
                 // Reset each checkbox and its background color
@@ -131,8 +133,11 @@
                 });
                 // Reset the current player to 'red' for the next game
                 currentPlayer = 'red';
+                // Reset the last clicked block index
+                lastClickedIndex = -1;
             }
         });
     </script>
+    
 </body>
 </html>
