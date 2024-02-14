@@ -1,143 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tic Tac Toe</title>
-<style>
-.board {
-display: grid;
-grid-template-columns: repeat(3, 100px);
-grid-template-rows: repeat(3, 100px);
-gap: 5px;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+        }
 
-    .checkbox {
-        display: none;
-    }
+        .checkbox {
+            display: none;
+        }
 
-    label {
-        display: block;
-        width: 100px;
-        height: 100px;
-        background-color: #eee;
-        cursor: pointer;
-    }
+        label {
+            display: block;
+            width: 100px;
+            height: 100px;
+            background-color: #eee;
+            cursor: pointer;
+        }
 
-    label:hover {
-        background-color: #ddd;
-    }
-</style>
-
-
+        label:hover {
+            background-color: #ddd;
+        }
+    </style>
 </head>
 <body>
-<h1>Welcome to Tic Tac Toe!</h1>
-<div id="gameBoard" class="board">
-<label for="pos1"><input type="checkbox" id="pos1" class="checkbox"></label>
-<label for="pos2"><input type="checkbox" id="pos2" class="checkbox"></label>
-<label for="pos3"><input type="checkbox" id="pos3" class="checkbox"></label>
-<label for="pos4"><input type="checkbox" id="pos4" class="checkbox"></label>
-<label for="pos5"><input type="checkbox" id="pos5" class="checkbox"></label>
-<label for="pos6"><input type="checkbox" id="pos6" class="checkbox"></label>
-<label for="pos7"><input type="checkbox" id="pos7" class="checkbox"></label>
-<label for="pos8"><input type="checkbox" id="pos8" class="checkbox"></label>
-<label for="pos9"><input type="checkbox" id="pos9" class="checkbox"></label>
-</div>
-<script src="logics.js">
-// Wait for the DOM content to be fully loaded before executing JavaScript code
-document.addEventListener('DOMContentLoaded', function () {
-// Get all elements with the class name 'checkbox' and store them in a NodeList
-const checkboxes = document.querySelectorAll('.checkbox');
+    <h1>Welcome to Tic Tac Toe!</h1>
+    <div id="gameBoard" class="board">
+        <label for="pos1"><input type="checkbox" id="pos1" class="checkbox"></label>
+        <label for="pos2"><input type="checkbox" id="pos2" class="checkbox"></label>
+        <label for="pos3"><input type="checkbox" id="pos3" class="checkbox"></label>
+        <label for="pos4"><input type="checkbox" id="pos4" class="checkbox"></label>
+        <label for="pos5"><input type="checkbox" id="pos5" class="checkbox"></label>
+        <label for="pos6"><input type="checkbox" id="pos6" class="checkbox"></label>
+        <label for="pos7"><input type="checkbox" id="pos7" class="checkbox"></label>
+        <label for="pos8"><input type="checkbox" id="pos8" class="checkbox"></label>
+        <label for="pos9"><input type="checkbox" id="pos9" class="checkbox"></label>
+    </div>
+    <script>
+        // Wait for the DOM content to be fully loaded before executing JavaScript code
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get all elements with the class name 'checkbox' and store them in a NodeList
+            const checkboxes = document.querySelectorAll('.checkbox');
 
-// Initialize the current player to 'red'
-let currentPlayer = 'red';
+            // Initialize the current player to 'red'
+            let currentPlayer = 'red';
 
-// Add event listeners to each checkbox
-checkboxes.forEach(addCheckboxChangeListener);
+            // Add event listeners to each checkbox
+            checkboxes.forEach(addCheckboxChangeListener);
 
-// Function to add change listener to checkboxes
-function addCheckboxChangeListener(checkbox, index) {
-    checkbox.addEventListener('change', function () {
-        // When a checkbox is checked
-        if (this.checked) {
-            // Mark the box with the current player's color
-            markBox(this);
-            // Check for a win
-            if (checkForWin()) {
-                // If a player wins, show an alert with the winning player's color
-                alert("Player " + currentPlayer + " wins!");
-                // Reset the game
-                resetGame();
+            // Function to add change listener to checkboxes
+            function addCheckboxChangeListener(checkbox, index) {
+                checkbox.addEventListener('change', function () {
+                    // When a checkbox is checked
+                    if (this.checked) {
+                        // Mark the box with the current player's color
+                        markBox(this);
+                        // Check for a win
+                        if (checkForWin()) {
+                            // If a player wins, show an alert with the winning player's color
+                            alert("Player " + currentPlayer + " wins!");
+                            // Reset the game
+                            resetGame();
+                        }
+                        // If the board is full and no player wins
+                        else if (isBoardFull()) {
+                            // Show an alert for a tie game
+                            alert("It's a tie!");
+                            // Reset the game
+                            resetGame();
+                        }
+                        // If the game is still ongoing
+                        else {
+                            // Switch to the next player
+                            switchPlayer();
+                        }
+                    }
+                });
             }
-            // If the board is full and no player wins
-            else if (isBoardFull()) {
-                // Show an alert for a tie game
-                alert("It's a tie!");
-                // Reset the game
-                resetGame();
+
+            // Function to mark the selected box with the current player's color
+            function markBox(checkbox) {
+                checkbox.parentNode.style.backgroundColor = currentPlayer;
             }
-            // If the game is still ongoing
-            else {
-                // Switch to the next player
-                switchPlayer();
+
+            // Function to switch player after each turn
+            function switchPlayer() {
+                currentPlayer = (currentPlayer === 'red') ? 'blue' : 'red';
             }
-        }
-    });
-}
 
-// Function to mark the selected box with the current player's color
-function markBox(checkbox) {
-    checkbox.parentNode.style.backgroundColor = currentPlayer;
-}
+            // Function to check if any player has won the game
+            function checkForWin() {
+                // Define winning combinations
+                const winningCombinations = [
+                    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                    [0, 4, 8], [2, 4, 6]
+                ];
 
-// Function to switch player after each turn
-function switchPlayer() {
-    currentPlayer = (currentPlayer === 'red') ? 'blue' : 'red';
-}
+                // Check if any winning combination is met
+                return winningCombinations.some(function (combination) {
+                    const [a, b, c] = combination;
+                    return (
+                        checkboxes[a].parentNode.style.backgroundColor !== '' &&
+                        checkboxes[a].parentNode.style.backgroundColor === checkboxes[b].parentNode.style.backgroundColor &&
+                        checkboxes[a].parentNode.style.backgroundColor === checkboxes[c].parentNode.style.backgroundColor
+                    );
+                });
+            }
 
-// Function to check if any player has won the game
-function checkForWin() {
-    // Define winning combinations
-    const winningCombinations = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8],
-        [0, 3, 6], [1, 4, 7], [2, 5, 8],
-        [0, 4, 8], [2, 4, 6]
-    ];
+            // Function to check if the board is full (no more moves possible)
+            function isBoardFull() {
+                // Convert the NodeList to an array and check if every checkbox has been marked
+                return Array.from(checkboxes).every(function (checkbox) {
+                    return checkbox.parentNode.style.backgroundColor !== '';
+                });
+            }
 
-    // Check if any winning combination is met
-    return winningCombinations.some(function (combination) {
-        const [a, b, c] = combination;
-        return (
-            checkboxes[a].parentNode.style.backgroundColor !== '' &&
-            checkboxes[a].parentNode.style.backgroundColor === checkboxes[b].parentNode.style.backgroundColor &&
-            checkboxes[a].parentNode.style.backgroundColor === checkboxes[c].parentNode.style.backgroundColor
-        );
-    });
-}
-
-// Function to check if the board is full (no more moves possible)
-function isBoardFull() {
-    // Convert the NodeList to an array and check if every checkbox has been marked
-    return Array.from(checkboxes).every(function (checkbox) {
-        return checkbox.parentNode.style.backgroundColor !== '';
-    });
-}
-
-// Function to reset the game board
-function resetGame() {
-    // Reset each checkbox and its background color
-    checkboxes.forEach(function (checkbox) {
-        checkbox.checked = false;
-        checkbox.parentNode.style.backgroundColor = '';
-    });
-    // Reset the current player to 'red' for the next game
-    currentPlayer = 'red';
-}
-
-
-});
-
-</script>
+            // Function to reset the game board
+            function resetGame() {
+                // Reset each checkbox and its background color
+                checkboxes.forEach(function (checkbox) {
+                    checkbox.checked = false;
+                    checkbox.parentNode.style.backgroundColor = '';
+                });
+                // Reset the current player to 'red' for the next game
+                currentPlayer = 'red';
+            }
+        });
+    </script>
 </body>
 </html>
