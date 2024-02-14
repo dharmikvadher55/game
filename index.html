@@ -11,6 +11,8 @@ grid-template-columns: repeat(3, 100px);
 grid-template-rows: repeat(3, 100px);
 gap: 5px;
 }
+
+```
     .checkbox {
         display: none;
     }
@@ -28,7 +30,8 @@ gap: 5px;
     }
 </style>
 
-​
+```
+
 </head>
 <body>
 <h1>Welcome to Tic Tac Toe!</h1>
@@ -44,68 +47,99 @@ gap: 5px;
 <label for="pos9"><input type="checkbox" id="pos9" class="checkbox"></label>
 </div>
 <script src="logics.js">
+// Wait for the DOM content to be fully loaded before executing JavaScript code
 document.addEventListener('DOMContentLoaded', function () {
-    const checkboxes = document.querySelectorAll('.checkbox');
-    let currentPlayer = 'red';
+// Get all elements with the class name 'checkbox' and store them in a NodeList
+const checkboxes = document.querySelectorAll('.checkbox');
 
-    checkboxes.forEach(addCheckboxClickListener);
+```
+// Initialize the current player to 'red'
+let currentPlayer = 'red';
 
-    function addCheckboxClickListener(checkbox, index) {
-        checkbox.addEventListener('click', function () {
-            if (!this.checked) {
-                this.checked = true;
-                markBox(this);
-                if (checkForWin()) {
-                    alert("Player " + currentPlayer + " wins!");
-                    resetGame();
-                } else if (isBoardFull()) {
-                    alert("It's a tie!");
-                    resetGame();
-                } else {
-                    switchPlayer();
-                }
+// Add event listeners to each checkbox
+checkboxes.forEach(addCheckboxChangeListener);
+
+// Function to add change listener to checkboxes
+function addCheckboxChangeListener(checkbox, index) {
+    checkbox.addEventListener('change', function () {
+        // When a checkbox is checked
+        if (this.checked) {
+            // Mark the box with the current player's color
+            markBox(this);
+            // Check for a win
+            if (checkForWin()) {
+                // If a player wins, show an alert with the winning player's color
+                alert("Player " + currentPlayer + " wins!");
+                // Reset the game
+                resetGame();
             }
-        });
-    }
+            // If the board is full and no player wins
+            else if (isBoardFull()) {
+                // Show an alert for a tie game
+                alert("It's a tie!");
+                // Reset the game
+                resetGame();
+            }
+            // If the game is still ongoing
+            else {
+                // Switch to the next player
+                switchPlayer();
+            }
+        }
+    });
+}
 
-    function markBox(checkbox) {
-        checkbox.parentNode.style.backgroundColor = currentPlayer;
-    }
+// Function to mark the selected box with the current player's color
+function markBox(checkbox) {
+    checkbox.parentNode.style.backgroundColor = currentPlayer;
+}
 
-    function switchPlayer() {
-        currentPlayer = (currentPlayer === 'red') ? 'blue' : 'red';
-    }
+// Function to switch player after each turn
+function switchPlayer() {
+    currentPlayer = (currentPlayer === 'red') ? 'blue' : 'red';
+}
 
-    function checkForWin() {
-        const winningCombinations = [
-            [0, 1, 2], [3, 4, 5], [6, 7, 8],
-            [0, 3, 6], [1, 4, 7], [2, 5, 8],
-            [0, 4, 8], [2, 4, 6]
-        ];
+// Function to check if any player has won the game
+function checkForWin() {
+    // Define winning combinations
+    const winningCombinations = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+    ];
 
-        return winningCombinations.some(function (combination) {
-            const [a, b, c] = combination;
-            return (
-                checkboxes[a].parentNode.style.backgroundColor !== '' &&
-                checkboxes[a].parentNode.style.backgroundColor === checkboxes[b].parentNode.style.backgroundColor &&
-                checkboxes[a].parentNode.style.backgroundColor === checkboxes[c].parentNode.style.backgroundColor
-            );
-        });
-    }
+    // Check if any winning combination is met
+    return winningCombinations.some(function (combination) {
+        const [a, b, c] = combination;
+        return (
+            checkboxes[a].parentNode.style.backgroundColor !== '' &&
+            checkboxes[a].parentNode.style.backgroundColor === checkboxes[b].parentNode.style.backgroundColor &&
+            checkboxes[a].parentNode.style.backgroundColor === checkboxes[c].parentNode.style.backgroundColor
+        );
+    });
+}
 
-    function isBoardFull() {
-        return Array.from(checkboxes).every(function (checkbox) {
-            return checkbox.parentNode.style.backgroundColor !== '';
-        });
-    }
+// Function to check if the board is full (no more moves possible)
+function isBoardFull() {
+    // Convert the NodeList to an array and check if every checkbox has been marked
+    return Array.from(checkboxes).every(function (checkbox) {
+        return checkbox.parentNode.style.backgroundColor !== '';
+    });
+}
 
-    function resetGame() {
-        checkboxes.forEach(function (checkbox) {
-            checkbox.checked = false;
-            checkbox.parentNode.style.backgroundColor = '';
-        });
-        currentPlayer = 'red';
-    }
+// Function to reset the game board
+function resetGame() {
+    // Reset each checkbox and its background color
+    checkboxes.forEach(function (checkbox) {
+        checkbox.checked = false;
+        checkbox.parentNode.style.backgroundColor = '';
+    });
+    // Reset the current player to 'red' for the next game
+    currentPlayer = 'red';
+}
+
+```
+
 });
 
 </script>
