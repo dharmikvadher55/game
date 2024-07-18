@@ -1,64 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-<script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-      appId: "21844c39-50e6-4570-b660-abf697c8dfc8",
-      safari_web_id: "web.onesignal.auto.35f9fdf2-e602-4832-95b7-1c199bdb2bd7",
-      notifyButton: {
-        enable: true,
-      },
-    });
-  });
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FCM with Firebase</title>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js"></script>
-    <!-- Include config.js -->
-    <script src="config.js"></script>
+    <title>OneSignal Web Push Demo</title>
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Check if firebaseConfig is available
-            if (typeof firebaseConfig !== 'undefined') {
-                // Initialize Firebase
-                firebase.initializeApp(firebaseConfig);
+        window.OneSignal = window.OneSignal || [];
+        OneSignal.push(function() {
+            OneSignal.init({
+                appId: "21844c39-50e6-4570-b660-abf697c8dfc8",
+                safari_web_id: "YOUR-SAFARI-WEB-ID", // Optional, if supporting Safari
+                notifyButton: {
+                    enable: true, // Set to false if you don't want to use the OneSignal Bell widget
+                },
+                welcomeNotification: {
+                    "title": "Welcome!",
+                    "message": "Thanks for subscribing to notifications!",
+                },
+            });
 
-                // Initialize Firebase Cloud Messaging
-                const messaging = firebase.messaging();
+            OneSignal.showSlidedownPrompt().then(() => {
+                console.log('Prompt displayed.');
+            }).catch((error) => {
+                console.error('Prompt display failed:', error);
+            });
 
-                // Request permission to send notifications
-                messaging.requestPermission().then(function() {
-                    console.log('Notification permission granted.');
-                    // Get the registration token
-                    return messaging.getToken();
-                }).then(function(token) {
-                    console.log('FCM Token:', token);
-                    alert('FCM Token: ' + token);
-                    // Send the token to your server and save it
-                }).catch(function(err) {
-                    console.error('Unable to get permission to notify.', err);
-                });
-
-                // Handle incoming messages
-                messaging.onMessage(function(payload) {
-                    console.log('Message received. ', payload);
-                    alert('Message received: ' + JSON.stringify(payload));
-                    // Customize notification handling
-                });
-            } else {
-                console.error('Firebase configuration not found.');
-            }
+            OneSignal.on('subscriptionChange', function (isSubscribed) {
+                console.log("The user's subscription state is now:", isSubscribed);
+                if (isSubscribed) {
+                    OneSignal.getUserId().then(function(userId) {
+                        console.log("OneSignal User ID:", userId);
+                    });
+                }
+            });
         });
+
+        function sendTestNotification() {
+            OneSignal.sendSelfNotification(
+                "Test Notification",
+                "This is a test notification from OneSignal",
+                '/',
+                'https://onesignal.com/images/notification_logo.png',
+                {
+                    // Custom data
+                    data: { key: 'value' }
+                }
+            ).then(() => {
+                console.log('Notification sent.');
+            }).catch((error) => {
+                console.error('Notification send error:', error);
+            });
+        }
     </script>
 </head>
 <body>
-    <h1>FCM with Firebase</h1>
-    <p>Welcome to the Firebase Cloud Messaging example!</p>
+    <h1>OneSignal Web Push Notification Demo</h1>
+    <button onclick="sendTestNotification()">Send Test Notification</button>
 </body>
 </html>
