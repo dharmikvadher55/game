@@ -3,62 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FCM Notification Example</title>
-    <!-- Include Firebase SDK -->
+    <title>FCM with Firebase</title>
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js"></script>
     <!-- Include config.js -->
     <script src="config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if firebaseConfig is available
+            if (typeof firebaseConfig !== 'undefined') {
+                // Initialize Firebase
+                firebase.initializeApp(firebaseConfig);
+
+                // Initialize Firebase Cloud Messaging
+                const messaging = firebase.messaging();
+
+                // Request permission to send notifications
+                messaging.requestPermission().then(function() {
+                    console.log('Notification permission granted.');
+                    // Get the registration token
+                    return messaging.getToken();
+                }).then(function(token) {
+                    console.log('FCM Token:', token);
+                    alert('FCM Token: ' + token);
+                    // Send the token to your server and save it
+                }).catch(function(err) {
+                    console.error('Unable to get permission to notify.', err);
+                });
+
+                // Handle incoming messages
+                messaging.onMessage(function(payload) {
+                    console.log('Message received. ', payload);
+                    alert('Message received: ' + JSON.stringify(payload));
+                    // Customize notification handling
+                });
+            } else {
+                console.error('Firebase configuration not found.');
+            }
+        });
+    </script>
 </head>
 <body>
-    <h1>FCM Notification Example</h1>
-    <p>Click the button below to request notification permission and get the FCM token.</p>
-    <button onclick="initializeFCM()">Initialize FCM</button>
-
-    <script>
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-
-        // Initialize Firebase Cloud Messaging
-        const messaging = firebase.messaging();
-
-        function initializeFCM() {
-            // Request permission to send notifications
-            messaging.requestPermission()
-            .then(function() {
-                console.log('Notification permission granted.');
-                // Get the registration token
-                return messaging.getToken();
-            })
-            .then(function(token) {
-                console.log('FCM Token:', token);
-                // Send the token to your server and save it
-                // Example: Send the token to your server using fetch or AJAX
-                // fetch('/save-token', { method: 'POST', body: JSON.stringify({ token }) });
-            })
-            .catch(function(err) {
-                console.error('Unable to get permission to notify.', err);
-            });
-
-            // Handle incoming messages
-            messaging.onMessage(function(payload) {
-                console.log('Message received. ', payload);
-                // Customize notification handling
-                const notificationTitle = payload.notification.title;
-                const notificationOptions = {
-                    body: payload.notification.body,
-                    icon: payload.notification.icon
-                };
-
-                if (Notification.permission === "granted") {
-                    var notification = new Notification(notificationTitle, notificationOptions);
-                    notification.onclick = function(event) {
-                        event.preventDefault();
-                        window.open(payload.notification.click_action, '_blank');
-                    }
-                }
-            });
-        }
-    </script>
+    <h1>FCM with Firebase</h1>
+    <p>Welcome to the Firebase Cloud Messaging example!</p>
 </body>
 </html>
