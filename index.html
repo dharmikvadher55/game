@@ -1,61 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OneSignal Web Push Demo</title>
-    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
-    <script>
-        window.OneSignal = window.OneSignal || [];
-        OneSignal.push(function() {
-            OneSignal.init({
-                appId: "21844c39-50e6-4570-b660-abf697c8dfc8",
-                safari_web_id: "YOUR-SAFARI-WEB-ID", // Optional, if supporting Safari
-                notifyButton: {
-                    enable: true, // Set to false if you don't want to use the OneSignal Bell widget
-                },
-                welcomeNotification: {
-                    "title": "Welcome!",
-                    "message": "Thanks for subscribing to notifications!",
-                },
-            });
-
-            OneSignal.showSlidedownPrompt().then(() => {
-                console.log('Prompt displayed.');
-            }).catch((error) => {
-                console.error('Prompt display failed:', error);
-            });
-
-            OneSignal.on('subscriptionChange', function (isSubscribed) {
-                console.log("The user's subscription state is now:", isSubscribed);
-                if (isSubscribed) {
-                    OneSignal.getUserId().then(function(userId) {
-                        console.log("OneSignal User ID:", userId);
-                    });
-                }
-            });
-        });
-
-        function sendTestNotification() {
-            OneSignal.sendSelfNotification(
-                "Test Notification",
-                "This is a test notification from OneSignal",
-                '/',
-                'https://onesignal.com/images/notification_logo.png',
-                {
-                    // Custom data
-                    data: { key: 'value' }
-                }
-            ).then(() => {
-                console.log('Notification sent.');
-            }).catch((error) => {
-                console.error('Notification send error:', error);
-            });
-        }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OneSignal Push Notifications</title>
+  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+  <script>
+    window.OneSignal = window.OneSignal || [];
+    OneSignal.push(function() {
+      OneSignal.init({
+        appId: "21844c39-50e6-4570-b660-abf697c8dfc8",
+      });
+    });
+  </script>
 </head>
 <body>
-    <h1>OneSignal Web Push Notification Demo</h1>
-    <button onclick="sendTestNotification()">Send Test Notification</button>
+  <h1>OneSignal Push Notifications</h1>
+  <button id="subscribeButton">Subscribe to Notifications</button>
+  <script>
+    document.getElementById('subscribeButton').addEventListener('click', function() {
+      OneSignal.push(function() {
+        OneSignal.showSlidedownPrompt();
+      });
+    });
+  </script>
 </body>
 </html>
