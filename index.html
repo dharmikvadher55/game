@@ -6,10 +6,17 @@
  <script src="OneSignalSDKWorker.js"></script>
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-      appId: "bf7de905-496f-47e1-bf5b-a215f61926c7",
+   window.OneSignal = window.OneSignal || [];
+  OneSignal.push(function() {
+    OneSignal.init({
+      appId: "YOUR_APP_ID",
+      safari_web_id: "YOUR_SAFARI_WEB_ID",
+      notifyButton: {
+        enable: true,
+      },
+      serviceWorkerPath: 'OneSignalSDKWorker.js',
+      serviceWorkerParam: { scope: '/' },
+      serviceWorkerUpdaterPath: 'OneSignalSDKUpdaterWorker.js',
     });
   });
 </script>
