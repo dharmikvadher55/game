@@ -2,97 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subscribe to Notifications</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
-            text-align: center;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            background-color: #007BFF;
-            color: white;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #statusMessage {
-            margin-top: 15px;
-            font-size: 14px;
-            color: #333;
-        }
-        #playerId {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #666;
-        }
-    </style>
+    <title>Page title</title>
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "bf7de905-496f-47e1-bf5b-a215f61926c7",
+    });
+  });
+</script>
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to Our Website</h1>
-        <p>Subscribe to our notifications to stay updated!</p>
-        <button id="subscribeButton">Subscribe</button>
-        <p id="statusMessage"></p>
-        <p id="playerId"></p>
-    </div>
-
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-        window.OneSignalDeferred = window.OneSignalDeferred || [];
-        OneSignalDeferred.push(async function(OneSignal) {
-            await OneSignal.init({
-                appId: "121b1849-d258-4cd3-b146-c604c67108b1", // Replace with your OneSignal App ID
-                notifyButton: {
-                    enable: true, // Optional: Display a default notification button
-                },
-            });
-
-            // Check if the user is already subscribed
-            OneSignal.isPushNotificationsEnabled(function(isEnabled) {
-                const statusMessage = document.getElementById('statusMessage');
-                if (isEnabled) {
-                    statusMessage.innerText = "You are already subscribed to notifications.";
-                } else {
-                    statusMessage.innerText = "You are not subscribed to notifications.";
-                }
-            });
-
-            // Prompt user to subscribe
-            document.getElementById('subscribeButton').addEventListener('click', function() {
-                OneSignal.showNativePrompt();
-
-                OneSignal.on('subscriptionChange', function(isSubscribed) {
-                    const statusMessage = document.getElementById('statusMessage');
-                    if (isSubscribed) {
-                        statusMessage.innerText = "Thank you for subscribing!";
-                        OneSignal.getUserId().then(function(userId) {
-                            console.log("OneSignal User ID (Player ID):", userId);
-                            document.getElementById('playerId').innerText = "OneSignal User ID: " + userId;
-                        });
-                    } else {
-                        statusMessage.innerText = "You have unsubscribed from notifications.";
-                    }
-                });
-            });
-        });
-    </script>
+    <h1>hello here</h1>
 </body>
 </html>
