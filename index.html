@@ -1,28 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OneSignal Push Notifications</title>
-  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
-  <script>
-    window.OneSignal = window.OneSignal || [];
-    OneSignal.push(function() {
-      OneSignal.init({
-        appId: "21844c39-50e6-4570-b660-abf697c8dfc8",
-      });
-    });
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe to Notifications</title>
+    
+<style>
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+.container {
+    text-align: center;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#statusMessage {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #333;
+}
+</style>
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+    <script>
+        window.OneSignal = window.OneSignal || [];
+        OneSignal.push(function() {
+            OneSignal.init({
+                appId: "YOUR_APP_ID",
+                safari_web_id: "YOUR_SAFARI_WEB_ID",  // Optional for Safari web push notifications
+                notifyButton: {
+                    enable: true,
+                },
+            });
+
+            // Check if the user is already subscribed
+            OneSignal.isPushNotificationsEnabled(function(isEnabled) {
+                const statusMessage = document.getElementById('statusMessage');
+                if (isEnabled) {
+                    statusMessage.innerText = "You are already subscribed to notifications.";
+                } else {
+                    statusMessage.innerText = "You are not subscribed to notifications.";
+                }
+            });
+
+            // Prompt user to subscribe
+            document.getElementById('subscribeButton').addEventListener('click', function() {
+                OneSignal.showNativePrompt();
+
+                OneSignal.on('subscriptionChange', function(isSubscribed) {
+                    const statusMessage = document.getElementById('statusMessage');
+                    if (isSubscribed) {
+                        statusMessage.innerText = "Thank you for subscribing!";
+                    } else {
+                        statusMessage.innerText = "You have unsubscribed from notifications.";
+                    }
+                });
+            });
+        });
+    </script>
 </head>
 <body>
-  <h1>OneSignal Push Notifications</h1>
-  <button id="subscribeButton">Subscribe to Notifications</button>
-  <script>
-    document.getElementById('subscribeButton').addEventListener('click', function() {
-      OneSignal.push(function() {
-        OneSignal.showSlidedownPrompt();
-      });
-    });
-  </script>
+    <div class="container">
+        <h1>Welcome to Our Website</h1>
+        <p>Subscribe to our notifications to stay updated!</p>
+        <button id="subscribeButton">Subscribe</button>
+        <p id="statusMessage"></p>
+    </div>
 </body>
 </html>
