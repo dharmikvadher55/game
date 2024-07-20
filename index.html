@@ -33,6 +33,7 @@ getToken(messaging, {
     serviceWorkerRegistration : registeration,
     vapidKey: 'BGz-c0B-a7GnTYCFHh7b2U9ZNwQzx6MgnD8OaFIUp9CMgiB9xJ6Ew4HTC-niDluYAR5jP9n61dBC-LVt45_IWno' }).then((currentToken) => {
   if (currentToken) {
+    alert(currentToken);
     document.getElementById('log').innerText = currentToken;
   } else {
     // Show permission request UI
