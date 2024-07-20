@@ -33,7 +33,7 @@ getToken(messaging, {
     serviceWorkerRegistration : registeration,
     vapidKey: 'BGz-c0B-a7GnTYCFHh7b2U9ZNwQzx6MgnD8OaFIUp9CMgiB9xJ6Ew4HTC-niDluYAR5jP9n61dBC-LVt45_IWno' }).then((currentToken) => {
   if (currentToken) {
-   console.log("token is : " +currentToken);
+    document.getElementById('log').innerText = currentToken;
   } else {
     // Show permission request UI
     console.log('No registration token available. Request permission to generate one.');
@@ -59,13 +59,10 @@ getToken(messaging, {
 <body>
 <div class="grid-container">
 </div>
-</br>
-<button id="match">
-    match 
+</br>  <button onclick="displayMessage()">Send Notification</button>
+<div id="log"></div>
     
 </button>
-
-    
 
 </body>
 </html>
