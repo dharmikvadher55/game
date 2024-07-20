@@ -4,55 +4,52 @@
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-        import { getMessaging , getToken  } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-messaging.js";
+        import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-messaging.js";
+        import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
         // TODO: Add SDKs for Firebase products that you want to use
         // https://firebase.google.com/docs/web/setup#available-libraries
       
         // Your web app's Firebase configuration
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-        const firebaseConfig = {
-          apiKey: "AIzaSyA37JyFHuUay7guLz31z24MIfbhYib2Lao",
-          authDomain: "qurious-steel.firebaseapp.com",
-          projectId: "qurious-steel",
-          storageBucket: "qurious-steel.appspot.com",
-          messagingSenderId: "835752084298",
-          appId: "1:835752084298:web:40a9d23efd2206dd3137b3",
-          measurementId: "G-0L59RLYX9S"
-        };
-      
+        import firebaseConfig from "./firebaseconfig.js";
+        
         // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const messaging = getMessaging();
+        const app = initializeApp(firebaseConfig);
+        const messaging = getMessaging();
+        const db = getFirestore();
+        const tokenCollection = collection(db, 'tokens');  // Firestore collection for tokens
 
-navigator.serviceWorker.register("sw.js").then(registeration => {
-
-
-// Get registration token. Initially this makes a network call, once retrieved
-// subsequent calls to getToken will return from cache.
-getToken(messaging, {
-    serviceWorkerRegistration : registeration,
-    vapidKey: 'BGz-c0B-a7GnTYCFHh7b2U9ZNwQzx6MgnD8OaFIUp9CMgiB9xJ6Ew4HTC-niDluYAR5jP9n61dBC-LVt45_IWno' }).then((currentToken) => {
-  if (currentToken) {
-    alert(currentToken);
-    document.getElementById('log').innerText = currentToken;
-  } else {
-    // Show permission request UI
-    console.log('No registration token available. Request permission to generate one.');
-    // ...
-  }
-}).catch((err) => {
-  console.log('An error occurred while retrieving token. ', err);
-  // ...
-});
-
-
-
-});
-      </script>
-
+        navigator.serviceWorker.register("sw.js").then(async (registration) => {
+            try {
+                // Get registration token
+                const currentToken = await getToken(messaging, {
+                    serviceWorkerRegistration: registration,
+                    vapidKey: 'BGz-c0B-a7GnTYCFHh7b2U9ZNwQzx6MgnD8OaFIUp9CMgiB9xJ6Ew4HTC-niDluYAR5jP9n61dBC-LVt45_IWno'
+                });
+                
+                if (currentToken) {
+                    document.getElementById('log').innerText = currentToken;
+                    
+                    // Check if the token already exists in Firestore
+                    const q = query(tokenCollection, where("token", "==", currentToken));
+                    const querySnapshot = await getDocs(q);
+                    
+                    if (querySnapshot.empty) {
+                        // Token does not exist, add it to Firestore
+                        await addDoc(tokenCollection, { token: currentToken, timestamp: new Date() });
+                        console.log("Token added successfully");
+                    } else {
+                        console.log("Token already exists");
+                    }
+                } else {
+                    console.log('No registration token available. Request permission to generate one.');
+                }
+            } catch (err) {
+                console.log('An error occurred while retrieving token. ', err);
+            }
+        });
+    </script>
 
 <meta charset="UTF-8">
-<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
 <title>Grid Layout Example</title>
 <style>
 </style>
@@ -60,12 +57,8 @@ getToken(messaging, {
 <body>
 <div class="grid-container">
 </div>
-</br>  <button onclick="displayMessage()">Send Notification</button>
+</br>  
+<button onclick="displayMessage()">Send Notification</button>
 <div id="log"></div>
-    
-</button>
-
 </body>
 </html>
-
- 
