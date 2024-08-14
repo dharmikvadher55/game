@@ -1,35 +1,30 @@
 self.addEventListener("push", event => {
-    // Extract JSON payload
-    const data = event.data.json();
-    console.log('Push event received:', data);
+    event.waitUntil(
+        event.data.json().then(data => {
+            console.log('Push event received:', data);
 
-    // Extract notification data
-    const notificationData = data.notification;
-    if (notificationData) {
-        const { title, body, icon, click_action } = notificationData;
+            // Extract notification data
+            const notificationData = data.notification;
+            if (notificationData) {
+                const title = notificationData.title || 'Default Title';
+                const body = notificationData.body || 'Default Body';
+                const icon = notificationData.icon || '/default-icon.png';
+                const click_action = notificationData.click_action || '/';
 
-        const options = {
-            body: body,
-            icon: icon,
-            data: {
-                url: click_action
+                const options = {
+                    body: body,
+                    icon: icon,
+                    data: {
+                        url: click_action
+                    }
+                };
+
+                return self.registration.showNotification(title, options);
+            } else {
+                console.error('Notification data not found in payload:', data);
             }
-        };
-
-        event.waitUntil(
-            self.registration.showNotification(title, options)
-        );
-    } else {
-        console.error('Notification data not found in payload:', data);
-    }
-});
-
-self.addEventListener("notificationclick", event => {
-    event.notification.close();
-
-    if (event.notification.data && event.notification.data.url) {
-        event.waitUntil(
-            clients.openWindow(event.notification.data.url)
-        );
-    }
+        }).catch(error => {
+            console.error('Failed to parse push event data:', error);
+        })
+    );
 });
