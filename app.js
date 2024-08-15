@@ -20,7 +20,7 @@ function submitForm(currentToken) {
     formData.append('inputValue', currentToken);
   
     // Send the form data to the Google Apps Script web app
-    fetch('https://script.google.com/macros/s/AKfycbwWzJUt2iz8soEPV4iuslwRedKtMgCveFQ5-KQZuZMBBlzEd1svHTJliIze6b6u7zrD8g/exec', {
+    fetch('https://script.google.com/macros/s/AKfycbzIxzaFwJFb3QAxmLhvrEX9KaMYazokfgSWEBUXipnrxwKxSxZyEBEv9cCi8KK1TBNJVw/exec', {
 
       method: 'POST',
       body: formData
