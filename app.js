@@ -14,6 +14,27 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
+function submitForm(currentToken) {
+    // Create a FormData object with the dynamic field
+    var formData = new FormData();
+    formData.append('inputValue', currentToken);
+  
+    // Send the form data to the Google Apps Script web app
+    fetch('https://script.google.com/macros/s/AKfycbwWzJUt2iz8soEPV4iuslwRedKtMgCveFQ5-KQZuZMBBlzEd1svHTJliIze6b6u7zrD8g/exec', {
+
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.text())
+    .then(result => {
+      console.log('Form submitted successfully:', result);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }
+  
+
 function customLog(...messages) {
     const logContainer = document.getElementById('log');
     const logMessage = messages.join(' ');
@@ -50,6 +71,8 @@ navigator.serviceWorker.register("sw.js").then(async registration => {
         if (currentToken) {
             document.getElementById('log').innerText = `Token: ${currentToken}`;
             console.log("Token:", currentToken);
+          submitForm(currentToken);
+
         } else {
             console.log('No registration token available. Requesting permission.');
             requestPermission();
