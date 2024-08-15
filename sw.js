@@ -3,6 +3,7 @@ self.addEventListener("push", event => {
         event.data.json().then(data => {
             console.log('Push event received:', data);
 
+            // Extract notification data
             const notificationData = data.notification;
             if (notificationData) {
                 const { title = 'Default Title', body = 'Default Body', icon = '/default-icon.png', click_action = '/' } = notificationData;
