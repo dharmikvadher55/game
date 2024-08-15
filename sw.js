@@ -1,29 +1,27 @@
 self.addEventListener("push", event => {
-    event.waitUntil(
-        event.data.json().then(data => {
-            console.log('Push event received:', data);
+    // Extract JSON payload
+    const data = event.data.json();
+    console.log('Push event received:', data);
 
-            // Extract notification data
-            const notificationData = data.notification;
-            if (notificationData) {
-                const { title = 'Default Title', body = 'Default Body', icon = '/default-icon.png', click_action = '/' } = notificationData;
+    // Extract notification data
+    const notificationData = data.notification;
+    if (notificationData) {
+        const { title, body, icon, click_action } = notificationData;
 
-                const options = {
-                    body: body,
-                    icon: icon,
-                    data: {
-                        url: click_action
-                    }
-                };
-
-                return self.registration.showNotification(title, options);
-            } else {
-                console.error('Notification data not found in payload:', data);
+        const options = {
+            body: body,
+            icon: icon,
+            data: {
+                url: click_action
             }
-        }).catch(error => {
-            console.error('Failed to parse push event data:', error);
-        })
-    );
+        };
+
+        event.waitUntil(
+            self.registration.showNotification(title, options)
+        );
+    } else {
+        console.error('Notification data not found in payload:', data);
+    }
 });
 
 self.addEventListener("notificationclick", event => {
