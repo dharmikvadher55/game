@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Display</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #weather {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Weather Information</h1>
+    <p>Enter Coordinates to get the weather details:</p>
+    <label for="latitude">Latitude:</label>
+    <input type="text" id="latitude" placeholder="Enter latitude">
+    <br>
+    <label for="longitude">Longitude:</label>
+    <input type="text" id="longitude" placeholder="Enter longitude">
+    <br>
+    <button id="getWeather">Get Weather</button>
+    
+    <div id="weather">
+        <p><strong>Temperature:</strong> <span id="temp"></span></p>
+        <p><strong>Weather:</strong> <span id="weatherDesc"></span></p>
+        <p><strong>Humidity:</strong> <span id="humidity"></span></p>
+        <p><strong>Wind Speed:</strong> <span id="windSpeed"></span></p>
+    </div>
+
+    <script>
+        document.getElementById('getWeather').addEventListener('click', function() {
+            const lat = document.getElementById('latitude').value;
+            const lon = document.getElementById('longitude').value;
+
+            if (lat && lon) {
+                const weatherUrl = `https://api.weatherapi.com/v1/current.json?key=&q=${lat},${lon}`;
+
+                fetch(weatherUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.current) {
+                            const temp = data.current.temp_c;
+                            const weatherDesc = data.current.condition.text;
+                            const humidity = data.current.humidity;
+                            const windSpeed = data.current.wind_kph;
+
+                            document.getElementById('temp').textContent = temp + '°C';
+                            document.getElementById('weatherDesc').textContent = weatherDesc;
+                            document.getElementById('humidity').textContent = humidity + '%';
+                            document.getElementById('windSpeed').textContent = windSpeed + ' km/h';
+                        } else {
+                            document.getElementById('temp').textContent = 'N/A';
+                            document.getElementById('weatherDesc').textContent = 'N/A';
+                            document.getElementById('humidity').textContent = 'N/A';
+                            document.getElementById('windSpeed').textContent = 'N/A';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching weather data:', error);
+                        document.getElementById('temp').textContent = 'Error';
+                        document.getElementById('weatherDesc').textContent = 'Error';
+                        document.getElementById('humidity').textContent = 'Error';
+                        document.getElementById('windSpeed').textContent = 'Error';
+                    });
+            } else {
+                alert('Please enter both latitude and longitude.');
+            }
+        });
+    </script>
+</body>
+</html>
