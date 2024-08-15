@@ -1,56 +1,184 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get User Location</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<title>User Details</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<style>
+  body {
+    font-family: sans-serif;
+  }
+  #userDetails {
+    display: none;
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-top: 20px;
+  }
+</style>
 </head>
 <body>
-    <h1>User Location</h1>
-    <p id="location">Click the button to get location.</p>
-    <button id="getLocation">Get Location</button>
 
-    <script>
-        $(document).ready(function() {
-            $('#getLocation').on('click', function() {
-                $('#location').text('Getting location...');
-                
-                // Delay before requesting location
-                setTimeout(function() {
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(
-                            function(position) {
-                                // Success callback
-                                var lat = position.coords.latitude;
-                                var lon = position.coords.longitude;
-                                $('#location').text(`Latitude: ${lat}, Longitude: ${lon}`);
-                            },
-                            function(error) {
-                                // Error callback
-                                switch (error.code) {
-                                    case error.PERMISSION_DENIED:
-                                        $('#location').text('Location permission denied. Please enable location access in your browser settings.');
-                                        break;
-                                    case error.POSITION_UNAVAILABLE:
-                                        $('#location').text('Location information is unavailable.');
-                                        break;
-                                    case error.TIMEOUT:
-                                        $('#location').text('The request to get user location timed out.');
-                                        break;
-                                    case error.UNKNOWN_ERROR:
-                                        $('#location').text('An unknown error occurred.');
-                                        break;
-                                }
-                                console.error("Error occurred: ", error); // Log error for debugging
-                            }
-                        );
-                    } else {
-                        $('#location').text('Geolocation is not supported by this browser.');
-                    }
-                }, 4000); // 4 seconds delay
-            });
-        });
-    </script>
+<h1>User Details</h1>
+
+<button id="getDetailsBtn">Get User Details</button>
+
+<div id="userDetails">
+  <h2>Basic Information</h2>
+  <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
+  <p><strong>Language:</strong> <span id="language"></span></p>
+  <p><strong>Platform:</strong> <span id="platform"></span></p>
+  <p><strong>Time Zone:</strong> <span id="timeZone"></span></p>
+
+  <h2>Location Information</h2>
+  <p><strong>Latitude:</strong> <span id="latitude"></span></p>
+  <p><strong>Longitude:</strong> <span id="longitude"></span></p>
+
+  <h2>Other Information</h2>
+  <p><strong>Connection Type:</strong> <span id="connectionType"></span></p>
+  <p><strong>Cores:</strong> <span id="cores"></span></p>
+  <p><strong>Memory:</strong> <span id="memory"></span></p>
+
+  <h2>Permissions</h2>
+  <p><strong>Notifications:</strong> <span id="notificationPermission"></span></p>
+  <p><strong>Geolocation:</strong> <span id="geolocationPermission"></span></p>
+  <p><strong>Microphone:</strong> <span id="microphonePermission"></span></p>
+  <p><strong>Camera:</strong> <span id="cameraPermission"></span></p>
+</div>
+
+<script>
+$(document).ready(function() {
+  $("#getDetailsBtn").click(function() {
+    // Basic Information
+    $("#userAgent").text(navigator.userAgent);
+    $("#language").text(navigator.language);
+    $("#platform").text(navigator.platform);
+    $("#timeZone").text(Intl.DateTimeFormat().resolvedOptions().timeZone);
+
+    // Location Information
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+      $("#latitude").text("Geolocation is not supported by this browser.");
+      $("#longitude").text("Geolocation is not supported by this browser.");
+    }
+
+    // Connection Information
+    if (navigator.connection) {
+      $("#connectionType").text(navigator.connection.effectiveType);
+    } else {
+      $("#connectionType").text("Connection information not available.");
+    }
+
+    // Hardware Information
+    if (navigator.hardwareConcurrency) {
+      $("#cores").text(navigator.hardwareConcurrency);
+    } else {
+      $("#cores").text("Hardware concurrency information not available.");
+    }
+
+    if (navigator.deviceMemory) {
+      $("#memory").text(navigator.deviceMemory + " GB");
+    } else {
+      $("#memory").text("Device memory information not available.");
+    }
+
+    // Permissions
+    requestNotificationPermission();
+    requestGeolocationPermission();
+    requestMicrophonePermission();
+    requestCameraPermission();
+
+    $("#userDetails").show();
+  });
+
+  function showPosition(position) {
+    $("#latitude").text(position.coords.latitude);
+    $("#longitude").text(position.coords.longitude);
+  }
+
+  function showError(error) {
+    switch(error.code) {
+      case error.PERMISSION_DENIED:
+        $("#geolocationPermission").text("User denied the request for Geolocation.");
+        break;
+      case error.POSITION_UNAVAILABLE:
+        $("#geolocationPermission").text("Location information is unavailable.");
+        break;
+      case error.TIMEOUT:
+        $("#geolocationPermission").text("The request to get user location timed out.");
+        break;
+      case error.UNKNOWN_ERROR:
+        $("#geolocationPermission").text("An unknown error occurred.");
+        break;
+    }
+  }
+
+  function requestNotificationPermission() {
+    try {
+      if (!("Notification" in window)) {
+        console.error("This browser does not support notifications.");
+        $("#notificationPermission").text("Not Supported");
+        return;
+      }
+
+      if (Notification.permission === "granted") {
+        console.log("Notification permission already granted.");
+        $("#notificationPermission").text("Granted");
+        return;
+      } else if (Notification.permission === "denied") {
+        console.error("Notification permission already denied.");
+        $("#notificationPermission").text("Denied");
+        return;
+      }
+
+      Notification.requestPermission().then(function(permission) {
+        $("#notificationPermission").text(permission);
+      });
+    } catch (err) {
+      console.error("Error requesting notification permission:", err);
+      $("#notificationPermission").text("Error");
+    }
+  }
+
+  function requestGeolocationPermission() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function(position) {
+          $("#geolocationPermission").text("Granted");
+        },
+        function(error) {
+          $("#geolocationPermission").text("Denied");
+        }
+      );
+    } else {
+      $("#geolocationPermission").text("Not Supported");
+    }
+  }
+
+  function requestMicrophonePermission() {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(function(stream) {
+        $("#microphonePermission").text("Granted");
+        // Stop the stream immediately to avoid using the microphone
+        stream.getTracks().forEach(track => track.stop());
+      })
+      .catch(function(err) {
+        $("#microphonePermission").text("Denied");
+      });
+  }
+
+  function requestCameraPermission() {
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(function(stream) {
+        $("#cameraPermission").text("Granted");
+        // Stop the stream immediately to avoid using the camera
+        stream.getTracks().forEach(track => track.stop());
+      })
+      .catch(function(err) {
+        $("#cameraPermission").text("Denied");
+      });
+  }
+});
+</script>
+
 </body>
 </html>
