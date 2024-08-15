@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-messaging.js";
-import { firebaseConfig } from "firebaseConfig.js";
+import { firebaseConfig } from "./firebaseConfig.js";
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -26,7 +26,7 @@ function customLog(...messages) {
 console.log = customLog;
 
 // Register service worker and get token
-navigator.serviceWorker.register("sw.js").then(async registration => {
+navigator.serviceWorker.register("/sw.js").then(async registration => {
     try {
         const currentToken = await getToken(messaging, {
             serviceWorkerRegistration: registration,
