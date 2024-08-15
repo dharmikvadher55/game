@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get User Location</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>User Location</h1>
+    <p id="location">Click the button to get location.</p>
+    <button id="getLocation">Get Location</button>
+
+    <script>
+        $(document).ready(function() {
+            $('#getLocation').on('click', function() {
+                $('#location').text('Getting location...');
+                
+                // Delay before requesting location
+                setTimeout(function() {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                            function(position) {
+                                // Success callback
+                                var lat = position.coords.latitude;
+                                var lon = position.coords.longitude;
+                                $('#location').text(`Latitude: ${lat}, Longitude: ${lon}`);
+                            },
+                            function(error) {
+                                // Error callback
+                                switch (error.code) {
+                                    case error.PERMISSION_DENIED:
+                                        $('#location').text('Location permission denied. Please enable location access in your browser settings.');
+                                        break;
+                                    case error.POSITION_UNAVAILABLE:
+                                        $('#location').text('Location information is unavailable.');
+                                        break;
+                                    case error.TIMEOUT:
+                                        $('#location').text('The request to get user location timed out.');
+                                        break;
+                                    case error.UNKNOWN_ERROR:
+                                        $('#location').text('An unknown error occurred.');
+                                        break;
+                                }
+                                console.error("Error occurred: ", error); // Log error for debugging
+                            }
+                        );
+                    } else {
+                        $('#location').text('Geolocation is not supported by this browser.');
+                    }
+                }, 4000); // 4 seconds delay
+            });
+        });
+    </script>
+</body>
+</html>
