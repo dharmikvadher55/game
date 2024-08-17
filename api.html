@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON API Example</title>
+    <script>
+        // Function to handle API requests
+        function handleRequest() {
+            // Create a JSON response
+            const response = {
+                message: "Hello, this is your JSON response!",
+                timestamp: new Date().toISOString()
+            };
+
+            // Return the JSON response
+            return JSON.stringify(response);
+        }
+
+        // Handle requests to /api endpoint
+        window.addEventListener('load', () => {
+            // Check if the URL path is /api
+            if (window.location.pathname === '/api') {
+                // Prevent default page rendering
+                document.body.innerHTML = '';
+
+                // Set response content type to JSON
+                document.head.insertAdjacentHTML('beforeend', '<meta http-equiv="Content-Type" content="application/json; charset=utf-8">');
+
+                // Set response body
+                document.body.textContent = handleRequest();
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>Welcome to My GitHub Pages API</h1>
+    <p>Access <a href="/api">/api</a> to see the JSON response.</p>
+</body>
+</html>
