@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sum Calculator</title>
+</head>
+<body>
+  <h1>Sum Calculator</h1>
+  <input type="text" id="action" value="start">
+  <textarea id="input" placeholder="Type a message..."></textarea>
+  <button id="send-button">Send</button>
+
+  <p id="result"></p>
+
+  <script>
+    document.getElementById('send-button').addEventListener('click', async function() {
+      const action = document.getElementById('action').value;
+      const message = document.getElementById('input').value;
+
+      try {
+        const response = await fetch('/api/add', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ action, message }),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          const resultString = JSON.stringify(result, null, 2);
+          document.getElementById('result').innerText = `Response: ${resultString}`;
+        } else {
+          const error = await response.text();
+          document.getElementById('result').innerText = `Error: ${error}`;
+        }
+      } catch (error) {
+        document.getElementById('result').innerText = `Error: ${error.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
